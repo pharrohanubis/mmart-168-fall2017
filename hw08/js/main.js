@@ -31,14 +31,14 @@ var people = [
 // use a for loop to DRY up the printNames function
 // it should loop over the people array and append
 // the users avatar pic, a greeting, and their score to the HTML
-const printNames = () => {
+const printNames = (counter) => {
   // Message 1
   const img1 = document.createElement('img')
-  img1.src = people[0].pic
-  img1.classList.add('avatar')
+  img1.src = people[counter].pic
+  img1.classList.add( 'avatar')
 
   const paragraph1 = document.createElement('p')
-  const text1 = document.createTextNode('Welcome, ' + people[0].name + '! Your score is: ' + people[0].score)
+  const text1 = document.createTextNode('Welcome, ' + people[counter].name + '! Your score is: ' + people[counter].score)
   paragraph1.appendChild(text1)
 
   document.querySelector('#part2').appendChild(img1)
