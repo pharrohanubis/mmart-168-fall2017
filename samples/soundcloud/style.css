@@ -1,7 +1,20 @@
 @import url('https://fonts.googleapis.com/css?family=Amatic+SC|Roboto');
+
+.placeholder {
+  text-align: center;
+  padding-top: 200px;
+}
+
+body {
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  background-size: 1500px;
+}
+
 body {
     font-family: 'Roboto', sans-serif;
-    background: #F0F0F0;
+    background-image: url('http://orig11.deviantart.net/ab88/f/2011/097/0/8/fairy_tail__rainbow_sakura_by_blissfullydisturbed-d3df1wr.jpg');
     margin: 0px;
     padding: 0px;
 }
@@ -425,3 +438,4 @@ button {
     pointer-events: none;
     position: absolute
 }
+https://fastjapan.com/en/wp-content/uploads/2017/01/pixta_6943986_M-1000x666.jpg

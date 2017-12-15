@@ -3,21 +3,22 @@
     /** Polyfills and prerequisites **/
 
     // requestAnimationFrame Polyfill
-    var lastTime    = 0;
-    var vendors     = ['webkit', 'o', 'ms', 'moz', ''];
-    var vendorCount = vendors.length;
+    const lastTime    = 0;
+    const vendors     = ['webkit', 'o', 'ms', 'moz', ''];
+    const vendorCount = vendors.length;
 
-    for (var x = 0; x < vendorCount && ! window.requestAnimationFrame; ++x) {
+    for (let x = 0; x < vendorCount && ! window.requestAnimationFrame; ++x) {
         window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
         window.cancelAnimationFrame  = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
     }
 
+
     if ( ! window.requestAnimationFrame) {
         window.requestAnimationFrame = function(callback) {
-            var currTime   = new Date().getTime();
-            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            const currTime   = new Date().getTime();
+            const timeToCall = Math.max(0, 16 - (currTime - lastTime));
 
-            var id   = window.setTimeout(function() { callback(currTime + timeToCall); }, timeToCall);
+            let id   = window.setTimeout(function() { callback(currTime + timeToCall, randomRGBA); }, timeToCall);
             lastTime = currTime + timeToCall;
 
             return id;
@@ -32,7 +33,7 @@
 
     // Prefixed event check
     $.fn.prefixedEvent = function(type, callback) {
-        for (var x = 0; x < vendorCount; ++x) {
+        for (let x = 0; x < vendorCount; ++x) {
             if ( ! vendors[x]) {
                 type = type.toLowerCase();
             }
@@ -45,13 +46,13 @@
     };
 
     // Test if element is in viewport
-    function elementInViewport(el) {
+    const elementInViewport = (el) =>  {
 
         if (el instanceof jQuery) {
             el = el[0];
         }
 
-        var rect = el.getBoundingClientRect();
+        const rect = el.getBoundingClientRect();
 
         return (
             rect.top >= 0 &&
@@ -62,12 +63,12 @@
     }
 
     // Random array element
-    function randomArrayElem(arr) {
+    const randomArrayElem = (arr) => {
         return arr[Math.floor(Math.random() * arr.length)];
     }
 
     // Random integer
-    function randomInt(min, max) {
+    const randomInt = (min, max) => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
@@ -75,10 +76,10 @@
     $.fn.sakura = function (event, options) {
 
         // Target element
-        var target = this.selector == "" ? $('body') : this;
+        let target = this.selector == "" ? $('body') : this;
 
         // Defaults for the option object, which gets extended below
-        var defaults = {
+        let defaults = {
             blowAnimations: ['blow-soft-left', 'blow-medium-left', 'blow-soft-right', 'blow-medium-right'],
             className: 'sakura',
             fallSpeed: 1,
@@ -87,7 +88,7 @@
             newOn: 300,
             swayAnimations: ['sway-0', 'sway-1', 'sway-2', 'sway-3', 'sway-4', 'sway-5', 'sway-6', 'sway-7', 'sway-8']
         };
-
+        // tryed const and let not working var only works
         var options = $.extend({}, defaults, options);
 
         // Default or start event
@@ -97,7 +98,11 @@
             target.css({ 'overflow-x': 'hidden' });
 
             // Function that inserts new petals into the document
-            var petalCreator = function () {
+            let petalCreator = function () {
+              const red = Math.floor(Math.random() * 255);
+              const green = Math.floor(Math.random() * 255);
+              const blue = Math.floor(Math.random() * 255);
+              const randomRGBA ='rgba('+red+','+green+','+blue+',1)';
                 if (target.data('sakura-anim-id')) {
                     setTimeout(function () {
                         requestAnimationFrame(petalCreator);
@@ -105,23 +110,23 @@
                 }
 
                 // Get one random animation of each type and randomize fall time of the petals
-                var blowAnimation = randomArrayElem(options.blowAnimations);
-                var swayAnimation = randomArrayElem(options.swayAnimations);
-                var fallTime = ((document.documentElement.clientHeight * 0.007) + Math.round(Math.random() * 5)) * options.fallSpeed;
+                const blowAnimation = randomArrayElem(options.blowAnimations);
+                const swayAnimation = randomArrayElem(options.swayAnimations);
+                const fallTime = ((document.documentElement.clientHeight * 0.007) + Math.round(Math.random() * 5)) * options.fallSpeed;
 
                 // Build animation
-                var animations =
+                let animations =
                     'fall ' + fallTime + 's linear 0s 1' + ', ' +
                         blowAnimation + ' ' + (((fallTime > 30 ? fallTime : 30) - 20) + randomInt(0, 20)) + 's linear 0s infinite' + ', ' +
                         swayAnimation + ' ' + randomInt(2, 4) + 's linear 0s infinite';
 
                 // Create petal and randomize size
-                var petal  = $('<div class="' + options.className + '" />');
-                var height = randomInt(options.minSize, options.maxSize);
-                var width  = height - Math.floor(randomInt(0, options.minSize) / 3);
+                const petal  = $('<div class="' + options.className + '" />');
+                const height = randomInt(options.minSize, options.maxSize);
+                const width  = height - Math.floor(randomInt(0, options.minSize) / 3);
 
                 // Apply Event Listener to remove petals that reach the bottom of the page
-                petal.prefixedEvent('AnimationEnd', function () {
+                petal.prefixedEvent('AnimationEnd', () => {
                     if ( ! elementInViewport(this)) {
                         $(this).remove();
                     }
@@ -145,7 +150,8 @@
                     height: height + 'px',
                     left: (Math.random() * document.documentElement.clientWidth - 100) + 'px',
                     'margin-top': (-(Math.floor(Math.random() * 20) + 15)) + 'px',
-                    width: width + 'px'
+                    width: width + 'px',
+                    background: randomRGBA
                 });
 
                 target.append(petal);
@@ -159,7 +165,7 @@
         else if (event === 'stop') {
 
             // Cancel animation
-            var animId = target.data('sakura-anim-id');
+            let animId = target.data('sakura-anim-id');
 
             if (animId) {
                 cancelAnimationFrame(animId);
@@ -169,12 +175,20 @@
             // Remove all current blossoms
             setTimeout(function() {
                 $('.' + options.className).remove();
-            }, (options.newOn + 50));
+            }, (options.newOn + 5000));
 
         }
     };
+
 }(jQuery));
 
+$(document).ready(function() {
+  const red = Math.floor(Math.random() * 255);
+  const green = Math.floor(Math.random() * 255);
+  const blue = Math.floor(Math.random() * 255);
+  const randomRGBA ='rgba('+red+','+green+','+blue+',1)';
+  $('body').sakura("background",randomRGBA);
+});
 $(document).ready(function() {
     $('body').sakura();
 });
